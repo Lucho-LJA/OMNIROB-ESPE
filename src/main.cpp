@@ -49,10 +49,6 @@
 
 String mensaje="";
 
-float RPM_motor1=0;
-float RPM_motor2=0;
-float RPM_motor3=0;
-float RPM_motor4=0;
 unsigned long prev_time_board=0;
 unsigned long time_board=0;
 unsigned long time_motor3=0;
@@ -103,6 +99,7 @@ void setup()
     nh.advertise(omni_rpm);
     nh.advertise(planta_omni);
     nh.subscribe(omni_pwm);
+    nh.subscribe(omni_mov);
     nh.subscribe(control_rpm_omni);
     nh.subscribe(accion_opc);
     stopCar();
@@ -133,25 +130,19 @@ void loop()
     Serial.println(mensaje);
 
     if (nh.connected()) {
-      //Serial.println("Connected");
+      omni_rpm.publish( &str_msg );
       // Say hello
-      if (accion==1){   
-      planta_omni.publish( &str_msg );
-      moveCar();
-      
-      }else{
-        stopCar();
-      }
+      #include "omni_move_case.h"
+
     } else {
     Serial.println("Not Connected");
     }
 
-    RPM_motor1=-EMotor_1.getRPM();
-    RPM_motor2=EMotor_2.getRPM();
-    RPM_motor3=-EMotor_3.getRPM();
-    RPM_motor4=EMotor_4.getRPM();
-    mensaje = String(RPM_motor1)+"-"+String(RPM_motor2)+"-"+String(RPM_motor3)+"-"+String(RPM_motor4);
-    str_msg.data=mensaje.c_str();
+    RPM_motor[0]=-EMotor_1.getRPM();
+    RPM_motor[1]=EMotor_2.getRPM();
+    RPM_motor[2]=-EMotor_3.getRPM();
+    RPM_motor[3]=EMotor_4.getRPM();
+    pwm_msg.data=RPM_motor;
 
     nh.spinOnce();
     delay(100);

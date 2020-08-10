@@ -6,6 +6,7 @@
     #include "std_msgs/Int8.h"
     #include "std_msgs/Int16.h"
     #include "std_msgs/Float32MultiArray.h"
+    #include "std_msgs/Char.h"
     #include <string>
 
     const char* ssid     = ROUTER_SSID;
@@ -22,8 +23,8 @@
 
     ros::NodeHandle nh;
     
-    float PWM_motor[4]={0,0,0,0};
-
+    
+    char movimiento=' ';
     int8_t accion=0;
     int8_t opc=0;
 
@@ -34,6 +35,13 @@
         PWM_motor[1]=msg.data[1];
         PWM_motor[2]=msg.data[2];
         PWM_motor[3]=msg.data[3];
+    }
+    
+    void Lectura_mov( const std_msgs::Char& msg)
+    {
+        
+        movimiento=msg.data;
+
     }
     
     void messageCb( const std_msgs::Int8& msg)
@@ -62,6 +70,7 @@
     ros::Publisher planta_omni("planta_omni1", &str_msg);
     
     ros::Subscriber<std_msgs::Float32MultiArray> omni_pwm("omni/pwm",&Lectura_PWM);
+    ros::Subscriber<std_msgs::Char> omni_mov("omni/movimiento",&Lectura_mov);
     ros::Subscriber<std_msgs::Int8> accion_opc("accion_omni1",&messageCb);
     ros::Subscriber<std_msgs::Int16> control_rpm_omni("rpm_omni1",&messageRPM);
 

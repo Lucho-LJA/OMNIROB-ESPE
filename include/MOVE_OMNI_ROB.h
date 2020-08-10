@@ -16,6 +16,13 @@
         motors_43.stopMotor();
 
     }
+    void stopCarF()
+    {
+
+        motors_21.stopMotorF();
+        motors_43.stopMotorF();
+
+    }
     void moveCar()
     {
         motors_21.mbMotor(PWM_motor[1],PWM_motor[0]);
@@ -57,13 +64,13 @@
         motors_21.moveMotor12(PWM_motor[1]);
         motors_43.moveMotor34(PWM_motor[2]);
     }
-    void turnRight()
+    void turnClockwise()
     {
         motors_21.backMotor(PWM_motor[1],PWM_motor[0]);
         motors_43.moveMotor(PWM_motor[3],PWM_motor[2]);
 
     }
-    void turnLeft()
+    void turnCounterClockwise()
     {
         motors_21.moveMotor(PWM_motor[1],PWM_motor[0]);
         motors_43.backMotor(PWM_motor[3],PWM_motor[2]);

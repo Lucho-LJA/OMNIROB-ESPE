@@ -1,7 +1,10 @@
 #ifndef _CONFIG_H_
     #define _CONFIG_H_
-
+    #include <Arduino.h>
+    
     int dt_board = 100; // delay system board in ms
+    uint16_t PWM_motor[4]={0,0,0,0};
+    float RPM_motor[4]={0,0,0,0};
     
     //MPU6050 CONFIGURATION
     #define ACCEL_SCALE 1/8192
