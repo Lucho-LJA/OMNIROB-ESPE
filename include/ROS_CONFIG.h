@@ -25,7 +25,7 @@
     
     
     char movimiento=' ';
-    int8_t accion=0;
+    char tipo_func=' ';
     int8_t opc=0;
 
     void Lectura_PWM( const std_msgs::Float32MultiArray& msg)
@@ -43,36 +43,28 @@
         movimiento=msg.data;
 
     }
-    
-    void messageCb( const std_msgs::Int8& msg)
-    {
-        
-        accion=msg.data;
-        //accion=String(msg.data);
-        //Serial.println(sms_1);
-    }
 
-    void messageRPM( const std_msgs::Int16& msg)
+    void Lectura_tipo( const std_msgs::Char& msg)
     {
         
-        opc=msg.data;
-        //accion=String(msg.data);
-        //Serial.println(sms_1);
+        tipo_func=msg.data;
+
     }
     
     // Make a chatter publisher
-    std_msgs::Float32MultiArray pwm_msg;
+    std_msgs::Float32MultiArray rpm_msg;
+    std_msgs::Float32MultiArray mpu_msg;
     std_msgs::String str_msg;
+    std_msgs::String str_msg1;
 
-    //std_msgs::Int16 int16_msg;
-    //std_msgs::String str_msg2;
-    ros::Publisher omni_rpm("omni/rpm", &pwm_msg);
-    ros::Publisher planta_omni("planta_omni1", &str_msg);
+    ros::Publisher omni_rpm("omni/rpm", &rpm_msg);
+    ros::Publisher omni_mpu("omni/mpu", &mpu_msg);
+    ros::Publisher error_esp("omni/error", &str_msg);
+    ros::Publisher ip_esp("omni/ip", &str_msg1);
     
     ros::Subscriber<std_msgs::Float32MultiArray> omni_pwm("omni/pwm",&Lectura_PWM);
     ros::Subscriber<std_msgs::Char> omni_mov("omni/movimiento",&Lectura_mov);
-    ros::Subscriber<std_msgs::Int8> accion_opc("accion_omni1",&messageCb);
-    ros::Subscriber<std_msgs::Int16> control_rpm_omni("rpm_omni1",&messageRPM);
+    ros::Subscriber<std_msgs::Char> tipo_mov("omni/movimiento",&Lectura_tipo); //elimar uso de sensores
 
 
 #endif

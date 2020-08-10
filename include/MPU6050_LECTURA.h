@@ -100,13 +100,13 @@
 
         
 
-    void Leer_mpu6050(String *Error_sis, double *mpu_AcelX, double *mpu_AcelY, double *mpu_AcelZ, double *mpu_GyroX, double *mpu_GyroY, double *mpu_GyroZ) 
+    void Leer_mpu6050() 
     {
 
         // if programming failed, don't try to do anything
         if (!dmpReady) 
         {
-            *Error_sis="SIN CONEXION DE MPU6050";
+            Error_sistema="SIN CONEXION DE MPU6050";
             return;
         }
          // read a packet from FIFO
@@ -116,9 +116,9 @@
                 // display Euler angles in degrees
                 mpu.dmpGetQuaternion(&q, fifoBuffer);
                 mpu.dmpGetEuler(euler, &q);
-                *mpu_GyroX=euler[0] * 180/M_PI;
-                *mpu_GyroY=euler[1] * 180/M_PI;
-                *mpu_GyroZ=euler[2] * 180/M_PI;
+                MPU_motor[3]=euler[0] * 180/M_PI;
+                MPU_motor[4]=euler[1] * 180/M_PI;
+                MPU_motor[5]=euler[2] * 180/M_PI;
             #endif
             #ifdef OUTPUT_READABLE_REALACCEL
                 // display real acceleration, adjusted to remove gravity
@@ -126,9 +126,9 @@
                 mpu.dmpGetAccel(&aa, fifoBuffer);
                 mpu.dmpGetGravity(&gravity, &q);
                 mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
-                *mpu_AcelX=aaReal.x*(double) ACCEL_SCALE*G_TO_ACCEL;
-                *mpu_AcelY=aaReal.y*(double) ACCEL_SCALE*G_TO_ACCEL;
-                *mpu_AcelZ=aaReal.z*(double) ACCEL_SCALE*G_TO_ACCEL;
+                MPU_motor[0]=aaReal.x*(double) ACCEL_SCALE*G_TO_ACCEL;
+                MPU_motor[1]=aaReal.y*(double) ACCEL_SCALE*G_TO_ACCEL;
+                MPU_motor[2]=aaReal.z*(double) ACCEL_SCALE*G_TO_ACCEL;
         }
         #endif
         

@@ -1,39 +1,18 @@
 
-//#define CONTROL_PID
-
-
 //#define _INIT_MPU_ /**uncomment to calibrate MPU by first time**/
+//#define_ALONE_ACT_
 #ifndef _INIT_MPU_
   #include "config.h"
   #include "ESP32_Encoder.h"
   #include "ROS_CONFIG.h"
   #include "MOVE_OMNI_ROB.h"
-
-  /*#include <string>
-  #include "MPU6050_LECTURA.h"
-*/
-  //Variables de estado
-  String Error_sistema ="NULL";
-  
+  #include <string>
+  #ifndef _ALONE_ACT_
+    #include "MPU6050_LECTURA.h"
+  #endif
+  String ip_board=" ";
   //Variables MPU
   
-  double mpu_acelX=0;
-  double mpu_acelY=0;
-  double mpu_acelZ=0;
-  double mpu_gyroX=0;
-  double mpu_gyroY=0;
-  double mpu_gyroZ=0;
-
-  
-  String sms_1="";
-
-
-
-
-  Encoder EMotor_1(MOTOR1_ENCODER_A,MOTOR1_ENCODER_B,CHIHAI_E_PPR,WHEEL_DIAMETER);
-  Encoder EMotor_2(MOTOR2_ENCODER_A,MOTOR2_ENCODER_B,CHIHAI_E_PPR,WHEEL_DIAMETER);
-  Encoder EMotor_3(MOTOR3_ENCODER_A,MOTOR3_ENCODER_B,CHIHAI_E_PPR,WHEEL_DIAMETER);
-  Encoder EMotor_4(MOTOR4_ENCODER_A,MOTOR4_ENCODER_B,CHIHAI_E_PPR,WHEEL_DIAMETER);
 
 
 
@@ -47,12 +26,8 @@
 
 
 
-String mensaje="";
-
 unsigned long prev_time_board=0;
 unsigned long time_board=0;
-unsigned long time_motor3=0;
-unsigned long time_motor4=0;
 
 
 
@@ -69,12 +44,10 @@ void setup()
     mpu_calibration();
   #else
     //Iniciar MPU6050
-    //Iniciar_MPU6050();
+    #ifndef _ALONE_ACT_
+      Iniciar_MPU6050();
+    #endif
 
-
-    Serial.println();
-    //Serial.print("Connecting to ");
-    Serial.println(ssid);
 
     // Connect the ESP32 the the wifi AP
     WiFi.mode(WIFI_STA);
@@ -85,69 +58,72 @@ void setup()
       Serial.println("Connecting...");
       delay(500);
     }
-    //Serial.println(WiFi.localIP());
+    ip_board=String(WiFi.localIP());
+    str_msg1.data= ip_board.c_str();
 
     // Set the connection to rosserial socket server
     nh.getHardware()->setConnection(server, serverPort);
     nh.initNode();
 
-    // Another way to get IP
-    //Serial.print("IP = ");
-    //Serial.println(nh.getHardware()->getLocalIP());
+    
 
     // Start to be polite
     nh.advertise(omni_rpm);
-    nh.advertise(planta_omni);
+    nh.advertise(omni_mpu);
+    nh.advertise(error_esp);
+    nh.advertise(ip_esp);
     nh.subscribe(omni_pwm);
     nh.subscribe(omni_mov);
-    nh.subscribe(control_rpm_omni);
-    nh.subscribe(accion_opc);
+    nh.subscribe(tipo_mov);
+    
     stopCar();
     EMotor_1.reset();
     EMotor_2.reset();
     EMotor_3.reset();
     EMotor_4.reset();
   #endif
+  prev_time_board =millis();
 }
 
 
 void loop()
 {
+  time_board = millis();
   #ifndef _INIT_MPU_
-    //Leer_mpu6050(&Error_sistema,&mpu_acelX, &mpu_acelY, &mpu_acelZ, &mpu_gyroX, &mpu_gyroY, &mpu_gyroZ);
-    //Serial.println("Aceleracion");
-    //Serial.println(mpu_acelX);
-    //Serial.println(mpu_acelY);
-    //Serial.println(mpu_acelZ);
-    //Serial.println("Angulo");
-    //Serial.println(mpu_gyroX);
-    //Serial.println(mpu_gyroY);
-    //Serial.println(mpu_gyroZ);
-    //delay(100);
 
-    
-    
-    Serial.println(mensaje);
+    if ((prev_time_board-time_board)>=dt_board)
+      { 
+        prev_time_board=time_board;
+        if (nh.connected()) 
+        {
+        
+          omni_rpm.publish( &rpm_msg );
+          omni_mpu.publish( &mpu_msg );
+          ip_esp.publish( &str_msg1 );
+          // Say hello
+          #include "omni_move_case.h"
 
-    if (nh.connected()) {
-      omni_rpm.publish( &str_msg );
-      // Say hello
-      #include "omni_move_case.h"
 
-    } else {
-    Serial.println("Not Connected");
+
+        } else {
+          Serial.println("Not Connected RASPBERRY");
+          stopCar();
+        }
+
+        #ifndef _ALONE_ACT_
+          Leer_mpu6050();
+          mpu_msg.data= MPU_motor;
+        #endif
+
+        RPM_motor[0]=-EMotor_1.getRPM();
+        RPM_motor[1]=EMotor_2.getRPM();
+        RPM_motor[2]=-EMotor_3.getRPM();
+        RPM_motor[3]=EMotor_4.getRPM();
+        rpm_msg.data=RPM_motor;
+
+
     }
 
-    RPM_motor[0]=-EMotor_1.getRPM();
-    RPM_motor[1]=EMotor_2.getRPM();
-    RPM_motor[2]=-EMotor_3.getRPM();
-    RPM_motor[3]=EMotor_4.getRPM();
-    pwm_msg.data=RPM_motor;
-
     nh.spinOnce();
-    delay(100);
-
-
-    
    #endif
 }
