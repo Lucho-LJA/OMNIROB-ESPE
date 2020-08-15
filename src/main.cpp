@@ -16,8 +16,6 @@
 
 
 
-
-
 #else
   #include "INIT_MPU6050.h"
 #endif
@@ -61,10 +59,13 @@ void setup()
     ip_board=String(WiFi.localIP());
     str_msg1.data= ip_board.c_str();
 
+    
     // Set the connection to rosserial socket server
     nh.getHardware()->setConnection(server, serverPort);
+    
     nh.initNode();
-
+    rpm_msg.data_length=4;
+    mpu_msg.data_length=6;
     
 
     // Start to be polite
@@ -90,9 +91,7 @@ void loop()
 {
   time_board = millis();
   #ifndef _INIT_MPU_
-
-    if ((prev_time_board-time_board)>=dt_board)
-      { 
+ 
         prev_time_board=time_board;
         if (nh.connected()) 
         {
@@ -101,6 +100,7 @@ void loop()
           omni_mpu.publish( &mpu_msg );
           ip_esp.publish( &str_msg1 );
           // Say hello
+          //Serial.println(movimiento);
           #include "omni_move_case.h"
 
 
@@ -115,15 +115,19 @@ void loop()
           mpu_msg.data= MPU_motor;
         #endif
 
-        RPM_motor[0]=-EMotor_1.getRPM();
-        RPM_motor[1]=EMotor_2.getRPM();
-        RPM_motor[2]=-EMotor_3.getRPM();
-        RPM_motor[3]=EMotor_4.getRPM();
+        RPM_motor[0]=abs(EMotor_1.getRPM());
+        RPM_motor[1]=abs(EMotor_2.getRPM());
+        RPM_motor[2]=abs(EMotor_3.getRPM());
+        RPM_motor[3]=abs(EMotor_4.getRPM());
         rpm_msg.data=RPM_motor;
 
 
-    }
+        
+        nh.spinOnce();
+        delay(dt_board);
 
-    nh.spinOnce();
+
+    
+    
    #endif
 }

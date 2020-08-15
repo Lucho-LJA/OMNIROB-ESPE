@@ -5,7 +5,7 @@
     
     int dt_board = 100; // delay system board in ms
     uint16_t PWM_motor[4]={0,0,0,0};
-    float RPM_motor[4]={0,0,0,0};
+    float RPM_motor[4];
     float MPU_motor[6]={0,0,0,0,0,0};
       //Variables de estado
     String Error_sistema =" ";

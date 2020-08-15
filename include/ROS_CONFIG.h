@@ -23,9 +23,8 @@
 
     ros::NodeHandle nh;
     
-    
-    char movimiento=' ';
-    char tipo_func=' ';
+    char movimiento='K';
+    char tipo_func='0';
     int8_t opc=0;
 
     void Lectura_PWM( const std_msgs::Float32MultiArray& msg)
@@ -64,7 +63,7 @@
     
     ros::Subscriber<std_msgs::Float32MultiArray> omni_pwm("omni/pwm",&Lectura_PWM);
     ros::Subscriber<std_msgs::Char> omni_mov("omni/movimiento",&Lectura_mov);
-    ros::Subscriber<std_msgs::Char> tipo_mov("omni/movimiento",&Lectura_tipo); //elimar uso de sensores
+    ros::Subscriber<std_msgs::Char> tipo_mov("omni/tipo",&Lectura_tipo); //elimar uso de sensores
 
 
 #endif

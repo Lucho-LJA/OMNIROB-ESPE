@@ -29,7 +29,7 @@
 	#include <Arduino.h>
 	#include "utility/direct_pin_read.h"
 	#include "utility/interrupt_pins.h"
-
+	#define REDUCTION_WHEEL 86
 	#ifndef CORE_NUM_INTERRUPT
 		#define ENCODER_ARGLIST_SIZE 0
 	#else
@@ -151,7 +151,7 @@
 
 				prev_update_time_ = current_time;
 				prev_encoder_ticks_ = encoder_ticks;
-				return (delta_ticks / counts_per_rev_) / dtm;
+				return delta_ticks / (counts_per_rev_*dtm* REDUCTION_WHEEL);
 			}
 			float getDist()
 			{
