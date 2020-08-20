@@ -27,13 +27,53 @@
     char tipo_func='0';
     int8_t opc=0;
 
-    void Lectura_PWM( const std_msgs::Float32MultiArray& msg)
+    /* VARIABLES TO TOPICS */
+
+    String opc_omni = "omni1";
+    String pRPM=opc_omni+"/rpm";
+    String pMPU=opc_omni+"/mpu";
+    String pSET=opc_omni+"/setpoint";
+    String pPKP=opc_omni+"/pid_kp";
+    String pPKI=opc_omni+"/pid_ki";
+    String pPKD=opc_omni+"/pid_kd";
+    String pMOV=opc_omni+"/movimiento";
+
+
+
+
+    void Lectura_SETPOINT( const std_msgs::Float32MultiArray& msg)
     {
         
-        PWM_motor[0]=msg.data[0];
-        PWM_motor[1]=msg.data[1];
-        PWM_motor[2]=msg.data[2];
-        PWM_motor[3]=msg.data[3];
+        SET_motor[0]=msg.data[0];
+        SET_motor[1]=msg.data[1];
+        SET_motor[2]=msg.data[2];
+        SET_motor[3]=msg.data[3];
+    }
+    void Lectura_KP_PID( const std_msgs::Float32MultiArray& msg)
+    {
+        
+        kp_motor[0]=msg.data[0];
+        kp_motor[1]=msg.data[1];
+        kp_motor[2]=msg.data[2];
+        kp_motor[3]=msg.data[3];
+        
+    }
+    void Lectura_KI_PID( const std_msgs::Float32MultiArray& msg)
+    {
+        
+        ki_motor[0]=msg.data[0];
+        ki_motor[1]=msg.data[1];
+        ki_motor[2]=msg.data[2];
+        ki_motor[3]=msg.data[3];
+        
+    }
+    void Lectura_KD_PID( const std_msgs::Float32MultiArray& msg)
+    {
+        
+        kd_motor[0]=msg.data[0];
+        kd_motor[1]=msg.data[1];
+        kd_motor[2]=msg.data[2];
+        kd_motor[3]=msg.data[3];
     }
     
     void Lectura_mov( const std_msgs::Char& msg)
@@ -43,27 +83,19 @@
 
     }
 
-    void Lectura_tipo( const std_msgs::Char& msg)
-    {
-        
-        tipo_func=msg.data;
-
-    }
     
     // Make a chatter publisher
     std_msgs::Float32MultiArray rpm_msg;
     std_msgs::Float32MultiArray mpu_msg;
-    std_msgs::String str_msg;
-    std_msgs::String str_msg1;
 
-    ros::Publisher omni_rpm("omni/rpm", &rpm_msg);
-    ros::Publisher omni_mpu("omni/mpu", &mpu_msg);
-    ros::Publisher error_esp("omni/error", &str_msg);
-    ros::Publisher ip_esp("omni/ip", &str_msg1);
+    ros::Publisher omni_rpm(pRPM.c_str(), &rpm_msg);
+    ros::Publisher omni_mpu(pMPU.c_str(), &mpu_msg);
     
-    ros::Subscriber<std_msgs::Float32MultiArray> omni_pwm("omni/pwm",&Lectura_PWM);
-    ros::Subscriber<std_msgs::Char> omni_mov("omni/movimiento",&Lectura_mov);
-    ros::Subscriber<std_msgs::Char> tipo_mov("omni/tipo",&Lectura_tipo); //elimar uso de sensores
+    ros::Subscriber<std_msgs::Float32MultiArray> omni_setpoint(pSET.c_str(),&Lectura_SETPOINT);
+    ros::Subscriber<std_msgs::Float32MultiArray> omni_kp(pPKP.c_str(),&Lectura_KP_PID);
+    ros::Subscriber<std_msgs::Float32MultiArray> omni_ki(pPKI.c_str(),&Lectura_KI_PID);
+    ros::Subscriber<std_msgs::Float32MultiArray> omni_kd(pPKD.c_str(),&Lectura_KD_PID);
+    ros::Subscriber<std_msgs::Char> omni_mov(pMOV.c_str(),&Lectura_mov);
 
 
 #endif

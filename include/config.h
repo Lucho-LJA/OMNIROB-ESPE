@@ -3,10 +3,36 @@
     #include <Arduino.h>
     #include <string>
     
+        //================DEFAULT CONFIGURATION IMU SENSOR=============================
+    //uncomment the IMU you're using
+    
+    #define IMU_MPU6050
+    #define MOTOR1_KP 21.4
+    #define MOTOR1_KI 228
+    #define MOTOR1_KD 0
+    #define MOTOR2_KP 20.7
+    #define MOTOR2_KI 276
+    #define MOTOR2_KD 0
+    #define MOTOR3_KP 20.8
+    #define MOTOR3_KI 221
+    #define MOTOR3_KD 0
+    #define MOTOR4_KP 20.5
+    #define MOTOR4_KI 183
+    #define MOTOR4_KD 0
+    
+    
     int dt_board = 100; // delay system board in ms
     uint16_t PWM_motor[4]={0,0,0,0};
-    float RPM_motor[4];
+    float RPM_motor[4]={0,0,0,0};
+    float SET_motor[4]={0,0,0,0};
     float MPU_motor[6]={0,0,0,0,0,0};
+
+    float kp_motor[4]={MOTOR1_KP,MOTOR2_KP,MOTOR3_KP,MOTOR4_KP};
+    float ki_motor[4]={MOTOR1_KI,MOTOR2_KI,MOTOR3_KI,MOTOR4_KI};
+    float kd_motor[4]={MOTOR1_KD,MOTOR2_KD,MOTOR3_KD,MOTOR4_KD};
+
+    float setpoint_motor[4]={0,0,0,0};
+
       //Variables de estado
     String Error_sistema =" ";
     
@@ -14,13 +40,14 @@
     #define ACCEL_SCALE 1/8192
     #define G_TO_ACCEL 9.81
     //define connection of net
+    #define OMNI_N "omni1"
     #define ROUTER_SSID "INTERNET ALLAUCA"
     #define ROUTER_PASWORD "2903LUis235689"
-    #define IP_ESP32 192,168,1,154    //Use <,> and not <.> 
+    #define IP_ESP32 192,168,1,151    //Use <,> and not <.> 
     #define IP_GATEWAY 192,168,1,1    //Use <,> and not <.> 
     #define IP_SUBNET 255,255,255,0   //Use <,> and not <.> 
-    #define ROS_SERVER 192,168,1,100    //Use <,> and not <.> 
-    #define ROS_SERVER_PORT 11412
+    #define ROS_SERVER 192,168,1,111    //Use <,> and not <.> 
+    #define ROS_SERVER_PORT 11421
     
     
     
@@ -88,21 +115,7 @@
     //================END DEFAULT CONFIGURATION TYPE OF MOTOR======================
 
 
-    //================DEFAULT CONFIGURATION IMU SENSOR=============================
-    //uncomment the IMU you're using
-    #define IMU_MPU6050
-    #define MOTOR1_KP 21.4
-    #define MOTOR1_KI 228
-    #define MOTOR1_KD 0
-    #define MOTOR2_KP 20.7
-    #define MOTOR2_KI 276
-    #define MOTOR2_KD 0
-    #define MOTOR3_KP 20.8
-    #define MOTOR3_KI 221
-    #define MOTOR3_KD 0
-    #define MOTOR4_KP 20.5
-    #define MOTOR4_KI 183
-    #define MOTOR4_KD 0
+
 
 
     //================END DEFAULT CONFIGURATION IMU SENSOR=========================

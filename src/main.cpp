@@ -1,18 +1,19 @@
 
 //#define _INIT_MPU_ /**uncomment to calibrate MPU by first time**/
 //#define_ALONE_ACT_
+#include "config.h"
 #ifndef _INIT_MPU_
-  #include "config.h"
+  
   #include "ESP32_Encoder.h"
   #include "ROS_CONFIG.h"
   #include "MOVE_OMNI_ROB.h"
   #include <string>
+  #include "PID_control.h"
   #ifndef _ALONE_ACT_
     #include "MPU6050_LECTURA.h"
   #endif
   String ip_board=" ";
   //Variables MPU
-  
 
 
 
@@ -47,35 +48,10 @@ void setup()
     #endif
 
 
-    // Connect the ESP32 the the wifi AP
-    WiFi.mode(WIFI_STA);
-    WiFi.config(ip,gateway,subnet);
-    WiFi.begin(ssid, password);
-    while (WiFi.status() != WL_CONNECTED) 
-    {
-      Serial.println("Connecting...");
-      delay(500);
-    }
-    ip_board=String(WiFi.localIP());
-    str_msg1.data= ip_board.c_str();
+    #include "Init_WIFI.h"
 
     
-    // Set the connection to rosserial socket server
-    nh.getHardware()->setConnection(server, serverPort);
-    
-    nh.initNode();
-    rpm_msg.data_length=4;
-    mpu_msg.data_length=6;
-    
-
-    // Start to be polite
-    nh.advertise(omni_rpm);
-    nh.advertise(omni_mpu);
-    nh.advertise(error_esp);
-    nh.advertise(ip_esp);
-    nh.subscribe(omni_pwm);
-    nh.subscribe(omni_mov);
-    nh.subscribe(tipo_mov);
+    #include "Init_ROS.h"
     
     stopCar();
     EMotor_1.reset();
@@ -89,21 +65,21 @@ void setup()
 
 void loop()
 {
-  time_board = millis();
   #ifndef _INIT_MPU_
- 
-        prev_time_board=time_board;
-        if (nh.connected()) 
+    time_board = millis();
+    if(time_board-prev_time_board>=dt_board)
+    {
+      prev_time_board=time_board;
+      PIDcompute(1023);
+    }
+      if (nh.connected()) 
         {
         
           omni_rpm.publish( &rpm_msg );
           omni_mpu.publish( &mpu_msg );
-          ip_esp.publish( &str_msg1 );
           // Say hello
           //Serial.println(movimiento);
           #include "omni_move_case.h"
-
-
 
         } else {
           Serial.println("Not Connected RASPBERRY");
@@ -120,14 +96,11 @@ void loop()
         RPM_motor[2]=abs(EMotor_3.getRPM());
         RPM_motor[3]=abs(EMotor_4.getRPM());
         rpm_msg.data=RPM_motor;
+        Serial.println(movimiento);
 
 
         
         nh.spinOnce();
-        delay(dt_board);
-
-
-    
-    
+        delay(dt_board/10);
    #endif
 }
