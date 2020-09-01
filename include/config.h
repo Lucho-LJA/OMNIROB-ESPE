@@ -7,25 +7,26 @@
     //uncomment the IMU you're using
     
     #define IMU_MPU6050
-    #define MOTOR1_KP 21.4
-    #define MOTOR1_KI 228
-    #define MOTOR1_KD 0
-    #define MOTOR2_KP 20.7
-    #define MOTOR2_KI 276
-    #define MOTOR2_KD 0
-    #define MOTOR3_KP 20.8
-    #define MOTOR3_KI 221
-    #define MOTOR3_KD 0
-    #define MOTOR4_KP 20.5
-    #define MOTOR4_KI 183
-    #define MOTOR4_KD 0
+    #define MOTOR1_KP 1//21.4
+    #define MOTOR1_KI 0//228
+    #define MOTOR1_KD 0//0
+    #define MOTOR2_KP 1//20.7
+    #define MOTOR2_KI 0//276
+    #define MOTOR2_KD 0//0
+    #define MOTOR3_KP 1//20.8
+    #define MOTOR3_KI 0//221
+    #define MOTOR3_KD 0//0
+    #define MOTOR4_KP 1//20.5
+    #define MOTOR4_KI 0//183
+    #define MOTOR4_KD 0//0
     
     
-    int dt_board = 100; // delay system board in ms
+    int dt_board = 50; // delay system board in ms
     uint16_t PWM_motor[4]={0,0,0,0};
     float RPM_motor[4]={0,0,0,0};
-    float SET_motor[4]={0,0,0,0};
+    int SET_motor[4]={0,0,0,0};
     float MPU_motor[6]={0,0,0,0,0,0};
+    int ENCODER_read[4]={0,0,0,0};
 
     float kp_motor[4]={MOTOR1_KP,MOTOR2_KP,MOTOR3_KP,MOTOR4_KP};
     float ki_motor[4]={MOTOR1_KI,MOTOR2_KI,MOTOR3_KI,MOTOR4_KI};
@@ -138,7 +139,7 @@
     //================DEFAULT CONFIGURATION DEVELOP BOARD==========================
     #ifdef ESP32_38P
         #define PWM_BITS 10                // PWM Resolution of the microcontroller
-        #define PWM_MAX pow(2, PWM_BITS) - 1
+        int PWM_MAX=pow(2, PWM_BITS) - 1;
         #define PWM_MIN 0
        // #define CORE_NUM_INTERRUPT 32
     #endif

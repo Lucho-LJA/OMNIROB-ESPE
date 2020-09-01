@@ -70,13 +70,43 @@ void loop()
     if(time_board-prev_time_board>=dt_board)
     {
       prev_time_board=time_board;
-      PIDcompute(1023);
+      /*Serial.println("MEDICION RPM - PWM");
+      Serial.print(med_rpm_[0]);
+      Serial.print(" - ");
+      Serial.print(med_rpm_[1]);
+      Serial.print(" - ");
+      Serial.print(med_rpm_[2]);
+      Serial.print(" - ");
+      Serial.println(med_rpm_[3]);
+      
+      Serial.println("SETPOINT");
+      Serial.print(SET_motor[0]);
+      Serial.print(" - ");
+      Serial.print(SET_motor[1]);
+      Serial.print(" - ");
+      Serial.print(SET_motor[2]);
+      Serial.print(" - ");
+      Serial.println(SET_motor[3]);*/
+      PIDcompute(PWM_MAX);
+      /*PWM_motor[0]=SET_motor[0];
+      PWM_motor[1]=SET_motor[1];
+      PWM_motor[2]=SET_motor[2];
+      PWM_motor[3]=SET_motor[3];*/
+      /*Serial.println("PWM");
+      Serial.print(PWM_motor[0]);
+      Serial.print(" - ");
+      Serial.print(PWM_motor[1]);
+      Serial.print(" - ");
+      Serial.print(PWM_motor[2]);
+      Serial.print(" - ");
+      Serial.println(PWM_motor[3]);*/
     }
       if (nh.connected()) 
         {
         
           omni_rpm.publish( &rpm_msg );
           omni_mpu.publish( &mpu_msg );
+          omni_encoder.publish(&encoder_msg);
           // Say hello
           //Serial.println(movimiento);
           #include "omni_move_case.h"
@@ -91,12 +121,32 @@ void loop()
           mpu_msg.data= MPU_motor;
         #endif
 
+        ENCODER_read[0]=EMotor_1.read();
+        ENCODER_read[1]=EMotor_2.read();
+        ENCODER_read[2]=EMotor_3.read();
+        ENCODER_read[3]=EMotor_4.read();
+        encoder_msg.data=ENCODER_read;
+
         RPM_motor[0]=abs(EMotor_1.getRPM());
+        med_rpm_[0]=map(RPM_motor[0],0,MOTOR_1_RPM,0,PWM_MAX);
         RPM_motor[1]=abs(EMotor_2.getRPM());
+        med_rpm_[1]=map(RPM_motor[1],0,MOTOR_1_RPM,0,PWM_MAX);
         RPM_motor[2]=abs(EMotor_3.getRPM());
+        med_rpm_[2]=map(RPM_motor[2],0,MOTOR_1_RPM,0,PWM_MAX);
         RPM_motor[3]=abs(EMotor_4.getRPM());
+        med_rpm_[3]=map(RPM_motor[3],0,MOTOR_1_RPM,0,PWM_MAX);
         rpm_msg.data=RPM_motor;
-        Serial.println(movimiento);
+        //Serial.print(med_rpm_[0]);
+
+        
+
+        /*Serial.print(encoder_msg.data[0]);
+        Serial.print(" - ");
+        Serial.print(encoder_msg.data[1]);
+        Serial.print(" - ");
+        Serial.print(encoder_msg.data[2]);
+        Serial.print(" - ");
+        Serial.println(encoder_msg.data[3]);*/
 
 
         

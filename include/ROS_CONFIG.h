@@ -1,11 +1,13 @@
 #ifndef _ROS_CONFIG_
     #define _ROS_CONFIG_
     #include "config.h"
+    #include "Arduino.h"
     #include "ros.h"
     #include "std_msgs/String.h"
     #include "std_msgs/Int8.h"
     #include "std_msgs/Int16.h"
     #include "std_msgs/Float32MultiArray.h"
+    #include "std_msgs/Int32MultiArray.h"
     #include "std_msgs/Char.h"
     #include <string>
 
@@ -37,6 +39,7 @@
     String pPKI=opc_omni+"/pid_ki";
     String pPKD=opc_omni+"/pid_kd";
     String pMOV=opc_omni+"/movimiento";
+    String pENCO=opc_omni+"/encoder";
 
 
 
@@ -44,36 +47,36 @@
     void Lectura_SETPOINT( const std_msgs::Float32MultiArray& msg)
     {
         
-        SET_motor[0]=msg.data[0];
-        SET_motor[1]=msg.data[1];
-        SET_motor[2]=msg.data[2];
-        SET_motor[3]=msg.data[3];
+        for(int i=0;i<4;i++)
+        {
+            SET_motor[i]=(int) (map(msg.data[i],0,ALL_MOTOR_RPM,0,PWM_MAX));
+        }
+        
+
     }
     void Lectura_KP_PID( const std_msgs::Float32MultiArray& msg)
-    {
-        
-        kp_motor[0]=msg.data[0];
-        kp_motor[1]=msg.data[1];
-        kp_motor[2]=msg.data[2];
-        kp_motor[3]=msg.data[3];
-        
+    { 
+        for(int i=0;i<4;i++)
+        {
+            kp_motor[i]=msg.data[i];
+        }
     }
+
     void Lectura_KI_PID( const std_msgs::Float32MultiArray& msg)
     {
         
-        ki_motor[0]=msg.data[0];
-        ki_motor[1]=msg.data[1];
-        ki_motor[2]=msg.data[2];
-        ki_motor[3]=msg.data[3];
-        
+        for(int i=0;i<4;i++)
+        {
+            ki_motor[i]=msg.data[i];
+        }
     }
+    
     void Lectura_KD_PID( const std_msgs::Float32MultiArray& msg)
     {
-        
-        kd_motor[0]=msg.data[0];
-        kd_motor[1]=msg.data[1];
-        kd_motor[2]=msg.data[2];
-        kd_motor[3]=msg.data[3];
+        for(int i=0;i<4;i++)
+        {
+            kd_motor[i]=msg.data[i];
+        }
     }
     
     void Lectura_mov( const std_msgs::Char& msg)
@@ -87,9 +90,11 @@
     // Make a chatter publisher
     std_msgs::Float32MultiArray rpm_msg;
     std_msgs::Float32MultiArray mpu_msg;
+    std_msgs::Int32MultiArray encoder_msg;
 
     ros::Publisher omni_rpm(pRPM.c_str(), &rpm_msg);
     ros::Publisher omni_mpu(pMPU.c_str(), &mpu_msg);
+    ros::Publisher omni_encoder(pENCO.c_str(), &encoder_msg);
     
     ros::Subscriber<std_msgs::Float32MultiArray> omni_setpoint(pSET.c_str(),&Lectura_SETPOINT);
     ros::Subscriber<std_msgs::Float32MultiArray> omni_kp(pPKP.c_str(),&Lectura_KP_PID);
