@@ -41,14 +41,14 @@
     #define ACCEL_SCALE 1/8192
     #define G_TO_ACCEL 9.81
     //define connection of net
-    #define OMNI_N "omni1"
+    #define OMNI_N "omni2"
     #define ROUTER_SSID "INTERNET ALLAUCA"
     #define ROUTER_PASWORD "2903LUis235689"
-    #define IP_ESP32 192,168,1,151    //Use <,> and not <.> 
+    #define IP_ESP32 192,168,1,152    //Use <,> and not <.> 
     #define IP_GATEWAY 192,168,1,1    //Use <,> and not <.> 
     #define IP_SUBNET 255,255,255,0   //Use <,> and not <.> 
-    #define ROS_SERVER 192,168,1,111    //Use <,> and not <.> 
-    #define ROS_SERVER_PORT 11421
+    #define ROS_SERVER 192,168,1,112   //Use <,> and not <.> 
+    #define ROS_SERVER_PORT 11422
     
     
     

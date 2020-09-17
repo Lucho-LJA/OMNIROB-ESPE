@@ -31,7 +31,7 @@
 
     /* VARIABLES TO TOPICS */
 
-    String opc_omni = "omni1";
+    String opc_omni = "omni2";
     String pRPM=opc_omni+"/rpm";
     String pMPU=opc_omni+"/mpu";
     String pSET=opc_omni+"/setpoint";
